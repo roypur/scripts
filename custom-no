@@ -9,7 +9,7 @@ xkb_symbols "basic" {
 
     include "latin(type2)"
 
-    name[Group1]="Norwegian_CUSTOM";
+    name[Group1]="Norwegian_roypur";
 
     key <AB09>	{ [    period,      colon,   ellipsis, periodcentered ]	};
     key <AB10>	{ [     minus, underscore,       endash,       emdash ]	};
@@ -39,40 +39,6 @@ xkb_symbols "basic" {
     include "kpdl(comma)"
 
     include "level3(ralt_switch)"
-};
-
-partial alphanumeric_keys
-xkb_symbols "nodeadkeys" {
-
-    // Modifies the basic Norwegian layout to eliminate dead keys
-
-    include "no(basic)"
-
-    name[Group1]="Norwegian (eliminate dead keys)";
-
-    key <AE12>	{ [ backslash,      grave,        acute,       ogonek ]	};
-    key <AD12>	{ [ diaeresis, asciicircum,  asciitilde,       macron ]	};
-    key <AC10>	{ [    oslash,   Ooblique,        acute,  doubleacute ]	};
-    key <AC11>	{ [        ae,         AE,  asciicircum,        caron ]	};
-    key <AB08>	{ [     comma,  semicolon,      cedilla,       ogonek ]	};
-    key <AB09>	{ [    period,      colon, periodcentered,   abovedot ]	};
-};
-
-partial alphanumeric_keys
-xkb_symbols "winkeys" {
-
-     include "no(basic)"
-     name[Group1]="Norwegian (Winkeys)";
-     include "eurosign(5)"
-};
-
-partial modifier_keys
-xkb_symbols "capsoff" {
-    key <CAPS> {
-        type[Group1] = "ONE_LEVEL",
-        symbols[Group1] = [ Caps_Lock ],
-        actions[Group1] = [ NoAction() ]
-    };
 };
 
 partial alphanumeric_keys
