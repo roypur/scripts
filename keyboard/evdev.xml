@@ -4190,10 +4190,9 @@
     </layout>
     <layout>
       <configItem>
-        <name>custom-no</name>
-        
-        <shortDescription>custom-no</shortDescription>
-        <description>Norwegian_CUSTOM</description>
+        <name>roypur-no</name>
+        <shortDescription>roypur-no</shortDescription>
+        <description>Norwegian_roypur</description>
         <languageList>
           <iso639Id>nor</iso639Id>
           <iso639Id>nob</iso639Id>
