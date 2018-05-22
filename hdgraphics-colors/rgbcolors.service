@@ -1,0 +1,16 @@
+[Unit]
+Description=Fix washed out colors intel
+Requires=graphical.target
+After=graphical.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+
+User=root
+Group=root
+
+ExecStart=/usr/bin/bash /snacks/bin/rgbcolor
+
+[Install]
+WantedBy=multi-user.target
