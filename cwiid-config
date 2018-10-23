@@ -1,0 +1,20 @@
+Wiimote.A       = KEY_ENTER
+Wiimote.B       = KEY_C
+Wiimote.Up      = KEY_UP
+Wiimote.Down    = KEY_DOWN
+Wiimote.Left    = KEY_LEFT
+Wiimote.Right   = KEY_RIGHT
+Wiimote.Minus   = KEY_MINUS
+Wiimote.Plus    = KEY_EQUAL
+Wiimote.Home    = KEY_ESC
+Wiimote.1       = KEY_SPACE
+Wiimote.2       = KEY_TAB
+
+Plugin.acc.X    = REL_RX
+Plugin.acc.Y    = REL_RY
+
+Plugin.ir_ptr.X = ABS_TILT_X
+Plugin.ir_ptr.Y = ABS_TILT_Y
+
+Plugin.led.Led1 = 1
+Plugin.led.Led4 = 1
