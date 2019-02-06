@@ -4203,71 +4203,26 @@
     </layout>
     <layout>
       <configItem>
-        <name>no</name>
-        
-        <shortDescription>no</shortDescription>
-        <description>Norwegian</description>
+        <name>roypur-no</name>
+        <shortDescription>roypur-no</shortDescription>
+        <description>Norwegian (NO) roypur</description>
         <languageList>
-          <iso639Id>nor</iso639Id>
-          <iso639Id>nob</iso639Id>
-          <iso639Id>nno</iso639Id>
+          <iso639Id>roypur-no</iso639Id>
         </languageList>
       </configItem>
       <variantList>
-        <variant>
-          <configItem>
-            <name>nodeadkeys</name>
-            <description>Norwegian (no dead keys)</description>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>winkeys</name>
-            <description>Norwegian (Win keys)</description>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>dvorak</name>
-            <description>Norwegian (Dvorak)</description>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>smi</name>
-            <description>Northern Saami (Norway)</description>
-            <languageList>
-              <iso639Id>sme</iso639Id>
-            </languageList>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>smi_nodeadkeys</name>
-            <description>Northern Saami (Norway, no dead keys)</description>
-            <languageList>
-              <iso639Id>sme</iso639Id>
-            </languageList>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>mac</name>
-            <description>Norwegian (Macintosh)</description>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>mac_nodeadkeys</name>
-            <description>Norwegian (Macintosh, no dead keys)</description>
-          </configItem>
-        </variant>
-        <variant>
-          <configItem>
-            <name>colemak</name>
-            <description>Norwegian (Colemak)</description>
-          </configItem>
-        </variant>
+      </variantList>
+    </layout>
+    <layout>
+      <configItem>
+        <name>roypur-gb</name>
+        <shortDescription>roypur-gb</shortDescription>
+        <description>English (UK) roypur</description>
+        <languageList>
+          <iso639Id>roypur-gb</iso639Id>
+        </languageList>
+      </configItem>
+      <variantList>
       </variantList>
     </layout>
     <layout>

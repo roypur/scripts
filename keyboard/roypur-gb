@@ -10,7 +10,7 @@ xkb_symbols "basic" {
 
     include "latin"
 
-    name[Group1]="English (UK)";
+    name[Group1]="English (UK) roypur";
 
     key <AE02>	{ [         2,   quotedbl,  twosuperior,    oneeighth ]	};
     key <AE03>	{ [         3,   sterling, threesuperior,    sterling ]	};

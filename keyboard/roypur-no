@@ -9,7 +9,7 @@ xkb_symbols "basic" {
 
     include "latin(type2)"
 
-    name[Group1]="Norwegian_roypur";
+    name[Group1]="Norwegian (NO) roypur";
 
     key <AB09>	{ [    period,      colon,   ellipsis, periodcentered ]	};
     key <AB10>	{ [     minus, underscore,       endash,       emdash ]	};
