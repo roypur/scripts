@@ -7,7 +7,7 @@ import tarfile
 
 
 def install_engine():
-    python_version = 2
+    python_version = 3 if len(glob.glob("lib/*2.7*", recursive=False)) == 0 else 2
 
     for fname in (
         glob.glob("*.sh", recursive=False)
@@ -19,14 +19,13 @@ def install_engine():
     shutil.rmtree(path="renpy")
     shutil.rmtree(path="lib")
 
-    try:
-        os.stat("lib/python2.7")
-    except FileNotFoundError:
-        python_version = 3
+    archive_file = (
+        "/home/roypur/Lataukset/renpy-8.2.1-sdk.tar.bz2"
+        if python_version == 3
+        else "/home/roypur/Lataukset/renpy-7.6.2-sdk.tar.bz2"
+    )
 
-    archive_file = "/home/roypur/Lataukset/renpy-8.2.1-sdk.tar.bz2"
-    if python_version == 2:
-        archive_file = "/home/roypur/Lataukset/renpy-7.6.2-sdk.tar.bz2"
+    print(f"Installing {archive_file}")
 
     with tempfile.TemporaryDirectory() as dirname:
         try:
