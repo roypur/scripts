@@ -16,6 +16,9 @@ def install_engine():
     ):
         os.remove(fname)
 
+    shutil.rmtree(path="renpy")
+    shutil.rmtree(path="lib")
+
     try:
         os.stat("lib/python2.7")
     except FileNotFoundError:
@@ -26,13 +29,21 @@ def install_engine():
         archive_file = "/home/roypur/Lataukset/renpy-7.6.2-sdk.tar.bz2"
 
     with tempfile.TemporaryDirectory() as dirname:
-        with tarfile.open(name=archive_file, mode="r:bz2") as archive:
-            archive.extractall(path=dirname)
-        base = glob.glob(os.path.join(dirname, "renpy-*"))
-        shutil.copytree(src=os.path.join(base, "renpy"), dst="renpy")
-        shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
-        shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
-        shutil.copyfile(src=os.path.join(base, "renpy.sh"), dst="renpy.sh")
+        try:
+            with tarfile.open(name=archive_file, mode="r:bz2") as archive:
+                archive.extractall(path=dirname)
+            base = glob.glob(os.path.join(dirname, "renpy-*"))[0]
+            shutil.copytree(src=os.path.join(base, "renpy"), dst="renpy")
+            shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
+            shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
+            shutil.copyfile(src=os.path.join(base, "renpy.sh"), dst="renpy.sh")
+            for dirpath, dirnames, filenames in os.walk("."):
+                os.chmod(path=dirpath, mode=0o700)
+                for filename in filenames:
+                    os.chmod(path=os.path.join(dirpath, filename), mode=0o700)
+
+        except Exception as e:
+            print(e)
 
 
 try:
