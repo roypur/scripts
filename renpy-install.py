@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import re
 import glob
 import tempfile
 import shutil
@@ -45,6 +46,19 @@ def install_engine():
             print(e)
 
 
+def remove_protection():
+    expr = re.compile("def check_load[\s\S]+(?=^def)", flags=re.MULTILINE)
+    try:
+        with open("renpy/savetoken.py", mode="r", encoding="utf-8") as f:
+            code = expr.sub(
+                "def check_load(log, signatures):\n    return True\n\n", f.read()
+            )
+        with open("renpy/savetoken.py", mode="w+", encoding="utf-8") as f:
+            f.write(code)
+    except Exception as e:
+        print(e)
+
+
 try:
     os.stat("renpy")
     os.stat("lib")
@@ -53,3 +67,4 @@ except FileNotFoundError:
     print("The current directory is not a renpy game")
 else:
     install_engine()
+    remove_protection()
