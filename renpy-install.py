@@ -47,7 +47,7 @@ def install_engine():
 
 
 def remove_protection():
-    expr = re.compile("def check_load[\s\S]+(?=^def)", flags=re.MULTILINE)
+    expr = re.compile("def check_load[\s\S]+?(?=^def)", flags=re.MULTILINE)
     try:
         with open("renpy/savetoken.py", mode="r", encoding="utf-8") as f:
             code = expr.sub(
