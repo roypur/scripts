@@ -47,13 +47,27 @@ def install_engine():
 
 
 def remove_protection():
-    expr = re.compile("def check_load[\s\S]+?(?=^def)", flags=re.MULTILINE)
+    expr = re.compile("def check_load[\\s\\S]+?(?=^def)", flags=re.MULTILINE)
     try:
         with open("renpy/savetoken.py", mode="r", encoding="utf-8") as f:
             code = expr.sub(
                 "def check_load(log, signatures):\n    return True\n\n", f.read()
             )
         with open("renpy/savetoken.py", mode="w+", encoding="utf-8") as f:
+            f.write(code)
+    except Exception as e:
+        print(e)
+
+
+def remove_hard_pause():
+    pause_def = "def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):"
+    try:
+        with open("renpy/exports.py", mode="r", encoding="utf-8") as f:
+            code = f.read().replace(
+                pause_def,
+                pause_def + '\n    print(f"hard={bool(hard)}")\n    hard = False',
+            )
+        with open("renpy/exports.py", mode="w+", encoding="utf-8") as f:
             f.write(code)
     except Exception as e:
         print(e)
@@ -68,3 +82,4 @@ except FileNotFoundError:
 else:
     install_engine()
     remove_protection()
+    remove_hard_pause()
