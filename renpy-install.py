@@ -31,7 +31,7 @@ def install_engine():
     with tempfile.TemporaryDirectory() as dirname:
         try:
             with tarfile.open(name=archive_file, mode="r:bz2") as archive:
-                archive.extractall(path=dirname)
+                archive.extractall(path=dirname, filter="tar")
             base = glob.glob(os.path.join(dirname, "renpy-*"))[0]
             shutil.copytree(src=os.path.join(base, "renpy"), dst="renpy")
             shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
