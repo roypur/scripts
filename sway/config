@@ -202,6 +202,8 @@ input type:keyboard {
     xkb_options grp:rctrl_toggle
 }
 
+exec seafile-applet
+
 bindsym $mod+l exec ${HOME}/bin/swaylock-with-dpms
 
 bindsym XF86AudioMute exec pactl set-sink-mute alsa_output.usb-BEHRINGER_UMC202HD_192k-00.HiFi__hw_U192k__sink
