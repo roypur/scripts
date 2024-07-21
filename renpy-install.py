@@ -65,7 +65,7 @@ def remove_hard_pause():
         with open("renpy/exports.py", mode="r", encoding="utf-8") as f:
             code = f.read().replace(
                 pause_def,
-                pause_def + '\n    print(f"hard={bool(hard)}")\n    hard = False',
+                pause_def + '\n    print("hard={0}".format(bool(hard)))\n    hard = False',
             )
         with open("renpy/exports.py", mode="w+", encoding="utf-8") as f:
             f.write(code)
