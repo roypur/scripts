@@ -3,13 +3,23 @@ import sys
 import subprocess
 
 
-def set_volume(increment: int) -> None:
+def get_sink() -> str:
     result = subprocess.run(
-        [
-            "pactl",
-            "get-sink-volume",
-            "alsa_output.usb-BEHRINGER_UMC202HD_192k-00.HiFi__hw_U192k__sink",
-        ],
+        ["pactl", "list", "sinks", "short"],
+        capture_output=True,
+        encoding="utf-8",
+    )
+    for line in result.stdout.splitlines():
+        sink = line.split()[1]
+        if "behringer" in sink.lower():
+            return sink
+    raise KeyError
+
+
+def set_volume(increment: int) -> None:
+    sink = get_sink()
+    result = subprocess.run(
+        ["pactl", "get-sink-volume", sink],
         capture_output=True,
         encoding="utf-8",
     )
@@ -27,7 +37,7 @@ def set_volume(increment: int) -> None:
         [
             "pactl",
             "set-sink-volume",
-            "alsa_output.usb-BEHRINGER_UMC202HD_192k-00.HiFi__hw_U192k__sink",
+            sink,
             str(volume),
         ],
         capture_output=True,
