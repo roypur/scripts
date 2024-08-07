@@ -201,7 +201,6 @@ include ${HOME}/.config/sway/local-config
 
 input type:keyboard {
     xkb_layout gb
-    xkb_options grp:rctrl_toggle
 }
 
 bindsym $mod+z exec swaymsg input type:keyboard xkb_layout "gb"

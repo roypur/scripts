@@ -13,8 +13,13 @@ def main() -> None:
     )
     for device in json.loads(result.stdout):
         if layout := device.get("xkb_active_layout_name"):
-            match = re.search("[(](.+)[)]", layout.lower())
-            print(match.group(1))
+            layout = layout.lower()
+            if "english" in layout:
+                print("uk")
+            elif "norwegian" in layout:
+                print("no")
+            elif "finnish" in layout:
+                print("fi")
             return
 
 

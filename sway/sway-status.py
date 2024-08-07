@@ -15,11 +15,19 @@ def get_layout() -> str:
     )
     for device in json.loads(result.stdout):
         if layout := device.get("xkb_active_layout_name"):
-            match = re.search("[(](.+)[)]", layout.lower())
-            return match.group(1)
+            layout = layout.lower()
+            if "english" in layout:
+                return "uk"
+            elif "norwegian" in layout:
+                return "no"
+            elif "finnish" in layout:
+                return "fi"
+            return layout
+
     return "layout not found"
 
 
+last_line = ""
 while True:
     time.sleep(0.1)
     layout = get_layout()
@@ -35,4 +43,7 @@ while True:
         )
     )
 
-    print(f"{layout} {pretty_time}")
+    next_line = f"{layout} {pretty_time}"
+    if last_line != next_line:
+        last_line = next_line
+        print(next_line)
