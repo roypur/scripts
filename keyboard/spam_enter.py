@@ -17,7 +17,7 @@ print(device)
 
 uinput = evdev.uinput.UInput()
 while True:
-    time.sleep(0.1)
+    time.sleep(0.05)
     for key in device.active_keys():
         if key == evdev.ecodes.KEY_KPMINUS:
             uinput.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_ENTER, 1)

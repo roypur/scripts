@@ -200,11 +200,15 @@ include /etc/sway/config.d/*
 include ${HOME}/.config/sway/local-config
 
 input type:keyboard {
-    xkb_layout gb,no,fi
+    xkb_layout gb
     xkb_options grp:rctrl_toggle
 }
 
+bindsym $mod+z exec swaymsg input type:keyboard xkb_layout "gb"
+bindsym $mod+x exec swaymsg input type:keyboard xkb_layout "fi"
+bindsym $mod+c exec swaymsg input type:keyboard xkb_layout "no"
 
+exec solaar --window=hide
 exec seafile-applet
 exec mega
 
