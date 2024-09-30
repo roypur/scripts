@@ -31,7 +31,7 @@ def read_battery() -> int:
 		with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8") as f:
 			return int(f.read())
 	except Exception as e:
-		print(e)
+		pass
 	return 0
 
 last_line = ""
