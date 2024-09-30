@@ -54,7 +54,7 @@ while True:
 
     next_line = f"{layout} {pretty_time}"
     if battery:
-        next_line = f"{battery} {layout} {pretty_time}"
+        next_line = f"{layout} %{battery} {pretty_time}"
     
     if last_line != next_line:
         last_line = next_line
