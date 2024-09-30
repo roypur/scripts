@@ -26,13 +26,15 @@ def get_layout() -> str:
 
     return "layout not found"
 
+
 def read_battery() -> int:
-	try:
-		with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8") as f:
-			return int(f.read())
-	except Exception as e:
-		pass
-	return 0
+    try:
+        with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8") as f:
+            return int(f.read())
+    except Exception:
+        pass
+    return 0
+
 
 last_line = ""
 while True:
@@ -54,8 +56,8 @@ while True:
 
     next_line = f"{layout} {pretty_time}"
     if battery:
-        next_line = f"{layout} %{battery} {pretty_time}"
-    
+        next_line = f"{layout} {battery}% {pretty_time}"
+
     if last_line != next_line:
         last_line = next_line
         print(next_line, flush=True)
