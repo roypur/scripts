@@ -29,9 +29,9 @@ def get_layout() -> str:
 def read_battery() -> int:
 	try:
 		with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8") as f:
-			return int(f.read().trim())
-	except Exception:
-		pass
+			return int(f.read())
+	except Exception as e:
+		print(e)
 	return 0
 
 last_line = ""
