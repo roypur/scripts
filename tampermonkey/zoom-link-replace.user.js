@@ -6,8 +6,8 @@
 // @author       roypur
 // @match        https://moodle.hsky.fi/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=hsky.fi
-// @updateURL    https://github.com/roypur/scripts/raw/main/tampermonkey/zoom-link-replace.user.js
-// @downloadURL  https://github.com/roypur/scripts/raw/main/tampermonkey/zoom-link-replace.user.js
+// @updateURL    https://github.com/roypur/scripts/raw/master/tampermonkey/zoom-link-replace.user.js
+// @downloadURL  https://github.com/roypur/scripts/raw/master/tampermonkey/zoom-link-replace.user.js
 // @grant        none
 // ==/UserScript==
 
