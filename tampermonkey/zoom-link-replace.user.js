@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Direct link to zoom meeting
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Direct link to zoom meeting
 // @author       roypur
 // @match        https://moodle.hsky.fi/*
@@ -27,5 +27,12 @@
       link.href = url.href;
       link.innerText = url.href;
     }
+  }
+  let pos = 0;
+  for (const element of document.getElementsByClassName("instancename")) {
+    if (pos > 0) {
+      element.innerText = `[${pos}] ${element.innerText}`;
+    }
+    pos++;
   }
 })();
