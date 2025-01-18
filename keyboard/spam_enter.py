@@ -34,6 +34,6 @@ def loop() -> None:
 while True:
     try:
         loop()
-    except (SystemError, KeyError):
+    except (SystemError, OSError, KeyError):
         print("8BitDo controller not connected. Retrying")
         time.sleep(1)

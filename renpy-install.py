@@ -21,9 +21,9 @@ def install_engine():
     shutil.rmtree(path="lib")
 
     archive_file = (
-        "/home/roypur/Lataukset/renpy-8.2.1-sdk.tar.bz2"
+        "/home/roypur/Lataukset/renpy-8.3.4-sdk.tar.bz2"
         if python_version == 3
-        else "/home/roypur/Lataukset/renpy-7.6.2-sdk.tar.bz2"
+        else "/home/roypur/Lataukset/renpy-7.8.4-sdk.tar.bz2"
     )
 
     print(f"Installing {archive_file}")
@@ -62,12 +62,12 @@ def remove_protection():
 def remove_hard_pause():
     pause_def = "def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):"
     try:
-        with open("renpy/exports.py", mode="r", encoding="utf-8") as f:
+        with open("renpy/exports/statementexports.py", mode="r", encoding="utf-8") as f:
             code = f.read().replace(
                 pause_def,
                 pause_def + '\n    print("hard={0}".format(bool(hard)))\n    hard = False',
             )
-        with open("renpy/exports.py", mode="w+", encoding="utf-8") as f:
+        with open("renpy/exports/statementexports.py", mode="w+", encoding="utf-8") as f:
             f.write(code)
     except Exception as e:
         print(e)
