@@ -1,19 +1,22 @@
 #!/usr/bin/env python3
 import os.path
-import tempfile
+import secrets
 import subprocess
+import pathlib
 
-with tempfile.TemporaryDirectory() as name:
-    fname = os.path.join(name, "screenshot.png")
-    subprocess.run(
-        ["/usr/bin/grim", fname],
-        check=True,
-        capture_output=True,
-        encoding="utf-8",
-    )
-    subprocess.run(
-        ["/usr/bin/gimp", fname],
-        check=True,
-        capture_output=True,
-        encoding="utf-8",
-    )
+directory = pathlib.Path.home().joinpath("tmp").joinpath(secrets.token_hex())
+directory.mkdir(parents=True)
+fname = os.path.join(directory, "screenshot.png")
+
+subprocess.run(
+    ["/usr/bin/grim", fname],
+    check=True,
+    capture_output=True,
+    encoding="utf-8",
+)
+subprocess.run(
+    ["/usr/bin/gimp", fname],
+    check=True,
+    capture_output=True,
+    encoding="utf-8",
+)
