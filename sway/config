@@ -211,4 +211,4 @@ exec solaar --window=hide
 exec seafile-applet
 exec mega
 
-bindsym $mod+l exec ${HOME}/bin/swaylock-with-dpms
+bindsym $mod+l exec ${HOME}/development/scripts/sway-lock-with-dpms.py
