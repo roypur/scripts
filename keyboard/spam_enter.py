@@ -31,9 +31,12 @@ def loop() -> None:
                 uinput.syn()
 
 
-while True:
-    try:
-        loop()
-    except (SystemError, OSError, KeyError):
-        print("8BitDo controller not connected. Retrying")
-        time.sleep(1)
+try:
+    while True:
+        try:
+            loop()
+        except (SystemError, OSError, KeyError):
+            print("8BitDo controller not connected. Retrying")
+            time.sleep(1)
+except KeyboardInterrupt:
+    print()
