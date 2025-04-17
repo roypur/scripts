@@ -4,16 +4,19 @@ import evdev
 
 KEYBOARD_NAME = "8BitDo"
 
-CAPABILITIES = {
+CAPABILITIES_KEYBOARD = {
     evdev.ecodes.EV_KEY: [
         evdev.ecodes.KEY_ENTER,
+    ],
+}
+
+CAPABILITIES_TOUCHSCREEN = {
+    evdev.ecodes.EV_KEY: [
         evdev.ecodes.BTN_LEFT,
     ],
     evdev.ecodes.EV_REL: [
         evdev.ecodes.REL_X,
-        evdev.ecodes.REL_Y,  # Cursor movement
-        evdev.ecodes.REL_WHEEL,
-        evdev.ecodes.REL_HWHEEL,  # Scroll wheel (optional)
+        evdev.ecodes.REL_Y,
     ],
 }
 
@@ -33,20 +36,38 @@ def loop() -> None:
     device.grab()
     print(device)
 
-    uinput = evdev.uinput.UInput(CAPABILITIES)
-    while True:
-        time.sleep(0.05)
-        for key in device.active_keys():
-            if key == evdev.ecodes.BTN_B:
-                uinput.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_ENTER, 1)
-                uinput.syn()
-                uinput.write(evdev.ecodes.EV_KEY, evdev.ecodes.KEY_ENTER, 0)
-                uinput.syn()
-            if key == evdev.ecodes.BTN_Y:
-                uinput.write(evdev.ecodes.EV_KEY, evdev.ecodes.BTN_MOUSE, 1)
-                uinput.syn()
-                uinput.write(evdev.ecodes.EV_KEY, evdev.ecodes.BTN_MOUSE, 0)
-                uinput.syn()
+    with (
+        evdev.uinput.UInput(CAPABILITIES_KEYBOARD) as uinput_keyboard,
+        evdev.uinput.UInput(CAPABILITIES_TOUCHSCREEN) as uinput_mouse,
+    ):
+        while True:
+            time.sleep(0.05)
+            for key in device.active_keys():
+                print(key)
+                if key == evdev.ecodes.BTN_B:
+                    uinput_keyboard.write(
+                        evdev.ecodes.EV_KEY, evdev.ecodes.KEY_ENTER, 1
+                    )
+                    uinput_keyboard.syn()
+                    uinput_keyboard.write(
+                        evdev.ecodes.EV_KEY, evdev.ecodes.KEY_ENTER, 0
+                    )
+                    uinput_keyboard.syn()
+                if key == evdev.ecodes.BTN_Y:
+                    uinput_mouse.write(evdev.ecodes.EV_REL, evdev.ecodes.REL_X, -5000)
+                    uinput_mouse.write(evdev.ecodes.EV_REL, evdev.ecodes.REL_Y, -5000)
+                    uinput_mouse.syn()
+                    time.sleep(1)
+
+                    uinput_mouse.write(evdev.ecodes.EV_REL, evdev.ecodes.REL_X, 1000)
+                    uinput_mouse.write(evdev.ecodes.EV_REL, evdev.ecodes.REL_Y, 500)
+                    uinput_mouse.syn()
+                    time.sleep(0.1)
+
+                    uinput_mouse.write(evdev.ecodes.EV_KEY, evdev.ecodes.BTN_LEFT, 1)
+                    uinput_mouse.syn()
+                    uinput_mouse.write(evdev.ecodes.EV_KEY, evdev.ecodes.BTN_LEFT, 0)
+                    uinput_mouse.syn()
 
 
 try:
