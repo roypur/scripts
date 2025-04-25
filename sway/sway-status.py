@@ -7,25 +7,26 @@ import datetime
 
 
 def get_layout() -> str:
-    result = subprocess.run(
-        ["swaymsg", "--raw", "--type", "get_inputs"],
-        check=True,
-        capture_output=True,
-        encoding="utf-8",
-    )
-    for device in json.loads(result.stdout):
-        if layout := device.get("xkb_active_layout_name"):
-            layout = layout.lower()
-            if "english" in layout:
-                return "uk"
-            elif "norwegian" in layout:
-                return "no"
-            elif "finnish" in layout:
-                return "fi"
-            return layout
-
+    try:
+        result = subprocess.run(
+            ["swaymsg", "--raw", "--type", "get_inputs"],
+            check=True,
+            capture_output=True,
+            encoding="utf-8",
+        )
+        for device in json.loads(result.stdout):
+            if layout := device.get("xkb_active_layout_name"):
+                layout = layout.lower()
+                if "english" in layout:
+                    return "uk"
+                elif "norwegian" in layout:
+                    return "no"
+                elif "finnish" in layout:
+                    return "fi"
+                return layout
+    except Exception:
+        pass
     return "layout not found"
-
 
 def read_battery() -> int:
     try:

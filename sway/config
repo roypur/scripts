@@ -92,7 +92,7 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-bindsym Print exec ${HOME}/bin/take-screenshot
+bindsym Print exec ${HOME}/development/scripts/sway/screenshot
 
 #
 # Workspaces:
@@ -187,7 +187,7 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command ${HOME}/bin/sway-status
+    status_command ${HOME}/development/scripts/sway/sway-status.py
 
     colors {
         statusline #ffffff
