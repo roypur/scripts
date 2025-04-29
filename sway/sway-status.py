@@ -36,12 +36,26 @@ def read_battery() -> int:
         pass
     return 0
 
+def read_battery_status() -> int:
+    try:
+        with open("/sys/class/power_supply/BAT0/status", encoding="utf-8") as f:
+            status = f.read().lower().strip()
+            if status == "discharging":
+                return -1
+            if status == "not charging":
+                return 1
+            if status == "charging":
+                return 1
+    except Exception:
+        pass
+    return 0
 
 last_line = ""
 while True:
     time.sleep(0.1)
     layout = get_layout()
     battery = read_battery()
+    battery_status = read_battery_status()
 
     ctime = datetime.datetime.now()
     pretty_time = str(
@@ -56,8 +70,11 @@ while True:
     )
 
     next_line = f"{layout} {pretty_time}"
-    if battery:
-        next_line = f"{layout} {battery}% {pretty_time}"
+    if battery and battery_status:
+        if battery_status == 1:
+            next_line = f"{layout} +{battery}% {pretty_time}"
+        else:
+            next_line = f"{layout} {battery}% {pretty_time}"
 
     if last_line != next_line:
         last_line = next_line
