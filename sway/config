@@ -92,6 +92,9 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPlay exec playerctl play-pause
 bindsym Print exec ${HOME}/development/scripts/sway/screenshot
 
 #
@@ -208,7 +211,5 @@ bindsym $mod+x exec swaymsg input type:keyboard xkb_layout "fi"
 bindsym $mod+c exec swaymsg input type:keyboard xkb_layout "no"
 
 exec solaar --window=hide
-exec seafile-applet
-exec mega
-
+exec swaync
 bindsym $mod+l exec ${HOME}/development/scripts/sway-lock-with-dpms.py
