@@ -23,7 +23,7 @@ def install_engine():
     archive_file = (
         "/home/roypur/Lataukset/renpy-8.3.4-sdk.tar.bz2"
         if python_version == 3
-        else "/home/roypur/Lataukset/renpy-7.8.4-sdk.tar.bz2"
+        else "/home/roypur/Lataukset/renpy-7.8.7-sdk.tar.bz2"
     )
 
     print(f"Installing {archive_file}")
