@@ -97,6 +97,9 @@ bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym Print exec ${HOME}/development/scripts/sway/screenshot
 
+bindsym XF86MonBrightnessDown exec ${HOME}/development/scripts/sway/set-backlight.py -10000
+bindsym XF86MonBrightnessUp exec ${HOME}/development/scripts/sway/set-backlight.py +10000
+
 #
 # Workspaces:
 #
