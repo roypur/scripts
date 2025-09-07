@@ -5,9 +5,21 @@ import glob
 import tempfile
 import shutil
 import tarfile
+import zipfile
+import sys
 
+def install_game(game_name: str, archive_name: str) -> None:
+    try:
+        os.mkdir(game_name)
+    except FileExistsError:
+        pass
 
-def install_engine():
+    with zipfile.ZipFile(archive_name, "r") as zip_ref:
+        inner_dir = zip_ref.namelist()[0].strip("/").split("/")[0]
+        zip_ref.extractall(game_name)
+    os.chdir(os.path.join(game_name, inner_dir))
+
+def install_engine() -> None:
     python_version = 3 if len(glob.glob("lib/*2.7*", recursive=False)) == 0 else 2
 
     for fname in (
@@ -46,7 +58,7 @@ def install_engine():
             print(e)
 
 
-def remove_protection():
+def remove_protection() -> None:
     expr = re.compile("def check_load[\\s\\S]+?(?=^def)", flags=re.MULTILINE)
     try:
         with open("renpy/savetoken.py", mode="r", encoding="utf-8") as f:
@@ -59,7 +71,7 @@ def remove_protection():
         print(e)
 
 
-def remove_hard_pause():
+def remove_hard_pause() -> None:
     pause_def = "def pause(delay=None, music=None, with_none=None, hard=False, predict=False, checkpoint=None, modal=None):"
     try:
         with open("renpy/exports/statementexports.py", mode="r", encoding="utf-8") as f:
@@ -72,14 +84,20 @@ def remove_hard_pause():
     except Exception as e:
         print(e)
 
-
-try:
-    os.stat("renpy")
-    os.stat("lib")
-    os.stat("game")
-except FileNotFoundError:
-    print("The current directory is not a renpy game")
-else:
-    install_engine()
-    remove_protection()
-    remove_hard_pause()
+def main() -> None:
+    if len(sys.argv) != 3:
+        print(f"{sys.argv[0]} <game_name> <archive_name>")
+        return
+    
+    install_game(sys.argv[1], sys.argv[2])
+    try:
+        os.stat("renpy")
+        os.stat("lib")
+        os.stat("game")
+    except FileNotFoundError:
+        print("The current directory is not a renpy game")
+    else:
+        install_engine()
+        remove_protection()
+        remove_hard_pause()
+main()
