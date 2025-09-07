@@ -8,6 +8,7 @@ import tarfile
 import zipfile
 import sys
 
+
 def install_game(game_name: str, archive_name: str) -> None:
     try:
         os.mkdir(game_name)
@@ -18,6 +19,7 @@ def install_game(game_name: str, archive_name: str) -> None:
         inner_dir = zip_ref.namelist()[0].strip("/").split("/")[0]
         zip_ref.extractall(game_name)
     os.chdir(os.path.join(game_name, inner_dir))
+
 
 def install_engine() -> None:
     python_version = 3 if len(glob.glob("lib/*2.7*", recursive=False)) == 0 else 2
@@ -77,18 +79,22 @@ def remove_hard_pause() -> None:
         with open("renpy/exports/statementexports.py", mode="r", encoding="utf-8") as f:
             code = f.read().replace(
                 pause_def,
-                pause_def + '\n    print("hard={0}".format(bool(hard)))\n    hard = False',
+                pause_def
+                + '\n    print("hard={0}".format(bool(hard)))\n    hard = False',
             )
-        with open("renpy/exports/statementexports.py", mode="w+", encoding="utf-8") as f:
+        with open(
+            "renpy/exports/statementexports.py", mode="w+", encoding="utf-8"
+        ) as f:
             f.write(code)
     except Exception as e:
         print(e)
+
 
 def main() -> None:
     if len(sys.argv) != 3:
         print(f"{sys.argv[0]} <game_name> <archive_name>")
         return
-    
+
     install_game(sys.argv[1], sys.argv[2])
     try:
         os.stat("renpy")
@@ -100,4 +106,6 @@ def main() -> None:
         install_engine()
         remove_protection()
         remove_hard_pause()
+
+
 main()
