@@ -19,7 +19,10 @@ def install_game(game_name: str, archive_name: str) -> None:
     inner_dir = secrets.token_hex()
     extract_path = os.path.join(game_name, inner_dir)
     with zipfile.ZipFile(archive_name, "r") as zip_ref:
-        elements = zip_ref.namelist()[0].strip("/").split("/")
+        elements = [
+            name.strip("/") for name in zip_ref.namelist() if "/" not in name.strip("/")
+        ]
+
         print(elements)
         if len(elements) == 1:
             extract_path = game_name
