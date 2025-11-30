@@ -7,6 +7,7 @@ import shutil
 import tarfile
 import zipfile
 import sys
+import secrets
 
 
 def install_game(game_name: str, archive_name: str) -> None:
@@ -15,9 +16,15 @@ def install_game(game_name: str, archive_name: str) -> None:
     except FileExistsError:
         pass
 
+    inner_dir = secrets.token_hex()
+    extract_path = os.path.join(game_name, inner_dir)
     with zipfile.ZipFile(archive_name, "r") as zip_ref:
-        inner_dir = zip_ref.namelist()[0].strip("/").split("/")[0]
-        zip_ref.extractall(game_name)
+        elements = zip_ref.namelist()[0].strip("/").split("/")
+        print(elements)
+        if len(elements) == 1:
+            extract_path = game_name
+            inner_dir = elements[0]
+        zip_ref.extractall(extract_path)
     os.chdir(os.path.join(game_name, inner_dir))
 
 
@@ -35,7 +42,7 @@ def install_engine() -> None:
     shutil.rmtree(path="lib")
 
     archive_file = (
-        "/home/roypur/Lataukset/renpy-8.3.7-sdk.tar.bz2"
+        "/home/roypur/Lataukset/renpy-8.4.1-sdk.tar.bz2"
         if python_version == 3
         else "/home/roypur/Lataukset/renpy-7.8.7-sdk.tar.bz2"
     )
