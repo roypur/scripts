@@ -22,7 +22,10 @@ async def main() -> None:
         subprocess.run(
             ["nmcli", "device", "wifi", "rescan"], check=True, capture_output=False
         )
-        await asyncio.sleep(1)
+        for _ in range(20):
+            if done:
+                break
+            await asyncio.sleep(0.1)
     await task
 
 
