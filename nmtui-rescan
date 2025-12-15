@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+import subprocess
+
+import asyncio
+
+
+async def main() -> None:
+    loop = asyncio.get_event_loop()
+
+    def nmtui() -> None:
+        subprocess.run(["nmtui"], check=False, capture_output=False)
+
+    done = False
+
+    async def run_nmtui() -> None:
+        await loop.run_in_executor(None, nmtui)
+        nonlocal done
+        done = True
+
+    task = loop.create_task(run_nmtui())
+    while not done:
+        subprocess.run(
+            ["nmcli", "device", "wifi", "rescan"], check=True, capture_output=False
+        )
+        await asyncio.sleep(1)
+    await task
+
+
+asyncio.run(main())
