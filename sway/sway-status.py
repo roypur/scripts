@@ -11,6 +11,28 @@ from pathlib import Path
 import asyncio
 
 SOCKET_PATH: Final[str] = str(Path.home() / ".config/sway-status-vpn.sock")
+VPN_STATUS: str = ""
+
+
+async def handle_client(
+    reader: asyncio.StreamReader, writer: asyncio.StreamWriter
+) -> None:
+    global VPN_STATUS
+    VPN_STATUS = (await reader.read(128)).decode("utf-8")
+
+    await writer.drain()
+    writer.close()
+    await writer.wait_closed()
+
+
+async def start_server() -> None:
+    if os.path.exists(SOCKET_PATH):
+        os.remove(SOCKET_PATH)
+
+    server = await asyncio.start_unix_server(handle_client, path=SOCKET_PATH)
+
+    async with server:
+        await server.serve_forever()
 
 
 class ConfigFile(pydantic.BaseModel):
@@ -34,28 +56,6 @@ def get_config() -> ConfigFile:
 
 
 CONFIG_FILE: Final[ConfigFile] = get_config()
-VPN_STATUS: str = ""
-
-
-async def handle_client(
-    reader: asyncio.StreamReader, writer: asyncio.StreamWriter
-) -> None:
-    global VPN_STATUS
-    VPN_STATUS = (await reader.read(128)).decode("utf-8")
-
-    await writer.drain()
-    writer.close()
-    await writer.wait_closed()
-
-
-async def start_server() -> None:
-    if os.path.exists(SOCKET_PATH):
-        os.remove(SOCKET_PATH)
-
-    server = await asyncio.start_unix_server(handle_client, path=SOCKET_PATH)
-
-    async with server:
-        await server.serve_forever()
 
 
 def get_layout() -> str:
@@ -124,12 +124,16 @@ async def start_loop() -> None:
             tzinfo=ctime.tzinfo,
         ).isoformat()
 
-        next_line = f"{layout} {pretty_time}"
+        vpn_prefix: str = f"{VPN_STATUS} "
+        if not vpn_prefix.strip():
+            vpn_prefix = ""
+
+        next_line = f"{vpn_prefix}{layout} {pretty_time}"
         if battery and battery_status:
             if battery_status == 1:
-                next_line = f"{layout} +{battery}% {pretty_time}"
+                next_line = f"{vpn_prefix}{layout} +{battery}% {pretty_time}"
             else:
-                next_line = f"{layout} {battery}% {pretty_time}"
+                next_line = f"{vpn_prefix}{layout} {battery}% {pretty_time}"
 
         if last_line != next_line:
             last_line = next_line
