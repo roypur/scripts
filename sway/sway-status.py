@@ -86,17 +86,16 @@ while True:
     battery = read_battery()
     battery_status = read_battery_status()
 
-    ctime = datetime.datetime.now()
-    pretty_time = str(
-        datetime.datetime(
-            day=ctime.day,
-            month=ctime.month,
-            year=ctime.year,
-            hour=ctime.hour,
-            minute=ctime.minute,
-            second=ctime.second,
-        )
-    )
+    ctime = datetime.datetime.now(tz=datetime.UTC).astimezone()
+    pretty_time = datetime.datetime(
+        day=ctime.day,
+        month=ctime.month,
+        year=ctime.year,
+        hour=ctime.hour,
+        minute=ctime.minute,
+        second=ctime.second,
+        tzinfo=ctime.tzinfo,
+    ).isoformat()
 
     next_line = f"{layout} {pretty_time}"
     if battery and battery_status:
