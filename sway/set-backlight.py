@@ -17,7 +17,7 @@ def set_brightness(increment: int) -> None:
         brightness = 0
 
     if brightness > 64764:
-        volume = 64764
+        brightness = 64764
 
     subprocess.run(
         [

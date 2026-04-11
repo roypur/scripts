@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 import subprocess
 import os
-import re
 import json
-import time
 import datetime
 import pydantic
 from typing import Final
@@ -26,6 +24,7 @@ async def start_server() -> None:
     sock.setblocking(False)
     try:
         while True:
+            global VPN_STATUS
             VPN_STATUS = (await loop.sock_recv(sock, 128)).decode("utf-8").strip()
     finally:
         sock.close()
