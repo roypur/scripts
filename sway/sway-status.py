@@ -27,9 +27,14 @@ async def start_server() -> None:
             global VPN_STATUS
             VPN_STATUS = (await loop.sock_recv(sock, 128)).decode("utf-8").strip()
     finally:
-        sock.close()
-        if os.path.exists(SOCKET_PATH):
+        try:
+            sock.close()
+        except Exception:
+            pass
+        try:
             os.remove(SOCKET_PATH)
+        except Exception:
+            pass
 
 
 class ConfigFile(pydantic.BaseModel):
@@ -149,6 +154,4 @@ async def main() -> None:
 try:
     asyncio.run(main())
 except KeyboardInterrupt:
-    if os.path.exists(SOCKET_PATH):
-        os.remove(SOCKET_PATH)
     print("\nCTRL-C pressed. Terminating")
