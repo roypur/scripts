@@ -4,6 +4,27 @@ import re
 import json
 import time
 import datetime
+from pathlib import Path
+
+
+class ConfigFile(pydantic.BaseModel):
+    battery_capacity_file: str = "/sys/class/power_supply/BAT0/capacity"
+    battery_status_file: str = "/sys/class/power_supply/BAT0/status"
+
+
+def get_config() -> ConfigFile:
+    try:
+        with open(
+            Path.home() / ".config/sway-status.json", mode="r", encoding="utf-8"
+        ) as f:
+            return ConfigFile.model_validate(json.loads(f.read()))
+    except FileNotFoundError:
+        with open(
+            Path.home() / ".config/sway-status.json", mode="x", encoding="utf-8"
+        ) as f:
+            config = ConfigFile()
+            f.write(config.model_dump_json(exclude_none=False, indent=4))
+            return config
 
 
 def get_layout() -> str:
@@ -28,17 +49,19 @@ def get_layout() -> str:
         pass
     return "layout not found"
 
-def read_battery() -> int:
+
+def read_battery(config: ConfigFile) -> int:
     try:
-        with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8") as f:
+        with open(config.battery_capacity_file, encoding="utf-8") as f:
             return int(f.read())
     except Exception:
         pass
     return 0
 
-def read_battery_status() -> int:
+
+def read_battery_status(config: ConfigFile) -> int:
     try:
-        with open("/sys/class/power_supply/BAT0/status", encoding="utf-8") as f:
+        with open(config.battery_capacity_file, encoding="utf-8") as f:
             status = f.read().lower().strip()
             if status == "discharging":
                 return -1
@@ -50,12 +73,14 @@ def read_battery_status() -> int:
         pass
     return 0
 
+
 last_line = ""
 while True:
     time.sleep(0.1)
+    config = get_config()
     layout = get_layout()
-    battery = read_battery()
-    battery_status = read_battery_status()
+    battery = read_battery(config)
+    battery_status = read_battery_status(config)
 
     ctime = datetime.datetime.now()
     pretty_time = str(

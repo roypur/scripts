@@ -46,7 +46,7 @@ def install_engine() -> None:
     shutil.rmtree(path="lib")
 
     archive_file = (
-        "/home/roypur/Lataukset/renpy-8.4.1-sdk.tar.bz2"
+        "/home/roypur/Lataukset/renpy-8.5.2-sdk.tar.bz2"
         if python_version == 3
         else "/home/roypur/Lataukset/renpy-7.8.7-sdk.tar.bz2"
     )
