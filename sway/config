@@ -215,4 +215,4 @@ bindsym $mod+c exec swaymsg input type:keyboard xkb_layout "no"
 
 exec solaar --window=hide
 exec swaync
-bindsym $mod+l exec ${HOME}/development/scripts/sway-lock-with-dpms.py
+bindsym $mod+l exec ${HOME}/development/scripts/sway-lock-with-dpms.sh
