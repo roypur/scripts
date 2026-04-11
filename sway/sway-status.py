@@ -5,6 +5,7 @@ import json
 import time
 import datetime
 import pydantic
+from typing import Final
 from pathlib import Path
 
 
@@ -26,6 +27,9 @@ def get_config() -> ConfigFile:
             config = ConfigFile()
             f.write(config.model_dump_json(exclude_none=False, indent=4))
             return config
+
+
+CONFIG_FILE: Final[ConfigFile] = get_config()
 
 
 def get_layout() -> str:
@@ -51,18 +55,18 @@ def get_layout() -> str:
     return "layout not found"
 
 
-def read_battery(config: ConfigFile) -> int:
+def read_battery() -> int:
     try:
-        with open(config.battery_capacity_file, encoding="utf-8") as f:
+        with open(CONFIG_FILE.battery_capacity_file, encoding="utf-8") as f:
             return int(f.read())
     except Exception:
         pass
     return 0
 
 
-def read_battery_status(config: ConfigFile) -> int:
+def read_battery_status() -> int:
     try:
-        with open(config.battery_capacity_file, encoding="utf-8") as f:
+        with open(CONFIG_FILE.battery_status_file, encoding="utf-8") as f:
             status = f.read().lower().strip()
             if status == "discharging":
                 return -1
@@ -78,10 +82,9 @@ def read_battery_status(config: ConfigFile) -> int:
 last_line = ""
 while True:
     time.sleep(0.1)
-    config = get_config()
     layout = get_layout()
-    battery = read_battery(config)
-    battery_status = read_battery_status(config)
+    battery = read_battery()
+    battery_status = read_battery_status()
 
     ctime = datetime.datetime.now()
     pretty_time = str(
