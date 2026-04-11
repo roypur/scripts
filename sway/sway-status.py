@@ -8,31 +8,29 @@ import datetime
 import pydantic
 from typing import Final
 from pathlib import Path
+import socket
 import asyncio
 
 SOCKET_PATH: Final[str] = str(Path.home() / ".config/sway-status-vpn.sock")
 VPN_STATUS: str = ""
 
 
-async def handle_client(
-    reader: asyncio.StreamReader, writer: asyncio.StreamWriter
-) -> None:
-    global VPN_STATUS
-    VPN_STATUS = (await reader.read(128)).decode("utf-8")
-
-    await writer.drain()
-    writer.close()
-    await writer.wait_closed()
-
-
 async def start_server() -> None:
     if os.path.exists(SOCKET_PATH):
         os.remove(SOCKET_PATH)
 
-    server = await asyncio.start_unix_server(handle_client, path=SOCKET_PATH)
+    loop = asyncio.get_running_loop()
 
-    async with server:
-        await server.serve_forever()
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
+    sock.bind(SOCKET_PATH)
+    sock.setblocking(False)
+    try:
+        while True:
+            VPN_STATUS = (await loop.sock_recv(sock, 128)).decode("utf-8").strip()
+    finally:
+        sock.close()
+        if os.path.exists(SOCKET_PATH):
+            os.remove(SOCKET_PATH)
 
 
 class ConfigFile(pydantic.BaseModel):
