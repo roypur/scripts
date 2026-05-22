@@ -42,6 +42,7 @@ async def start_server() -> None:
 class ConfigFile(pydantic.BaseModel):
     battery_capacity_file: str = "/sys/class/power_supply/BAT0/capacity"
     battery_status_file: str = "/sys/class/power_supply/BAT0/status"
+    final_vertical_line: bool = True
 
 
 @dataclasses.dataclass
@@ -264,9 +265,11 @@ async def start_loop() -> None:
             if battery_status == 1:
                 battery_entry = f"+{battery}% | "
 
-        next_line = (
-            f"{network_status}{vpn_prefix}{layout}{battery_entry}{pretty_time} | "
-        )
+        terminator = ""
+        if CONFIG_FILE.final_vertical_line:
+            terminator = " | "
+
+        next_line = f"| {network_status}{vpn_prefix}{layout}{battery_entry}{pretty_time}{terminator}"
         if last_line != next_line:
             last_line = next_line
             print(next_line, flush=True)
