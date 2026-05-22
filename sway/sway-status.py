@@ -99,6 +99,32 @@ def get_layout() -> str:
     return ""
 
 
+def get_ssid(uuid: str) -> str | None:
+    try:
+        result = subprocess.run(
+            [
+                "nmcli",
+                "--terse",
+                "--fields",
+                "802-11-wireless.ssid",
+                "connection",
+                "show",
+                uuid,
+            ],
+            check=True,
+            capture_output=True,
+            encoding="utf-8",
+        )
+        if not (clean_result := result.stdout.strip()).startswith(
+            "802-11-wireless.ssid:"
+        ):
+            return None
+        return clean_result.removeprefix("802-11-wireless.ssid:")
+    except Exception as e:
+        print(e)
+    return None
+
+
 def get_network_status() -> list[NetworkStatus]:
     try:
         result = subprocess.run(
@@ -106,7 +132,7 @@ def get_network_status() -> list[NetworkStatus]:
                 "nmcli",
                 "--terse",
                 "--fields",
-                "type,device,name",
+                "type,device,uuid",
                 "connection",
                 "show",
                 "--active",
@@ -120,13 +146,14 @@ def get_network_status() -> list[NetworkStatus]:
             splitted = line.strip().split(":")
             if len(splitted) == 3:
                 if splitted[0] == "802-11-wireless":
-                    connections.append(
-                        NetworkStatus(
-                            network_type="wifi",
-                            device=splitted[1],
-                            ssid=splitted[2],
+                    if ssid := get_ssid(splitted[2]):
+                        connections.append(
+                            NetworkStatus(
+                                network_type="wifi",
+                                device=splitted[1],
+                                ssid=ssid,
+                            )
                         )
-                    )
                 elif splitted[0] == "802-3-ethernet":
                     connections.append(
                         NetworkStatus(
