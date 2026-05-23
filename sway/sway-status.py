@@ -241,17 +241,32 @@ def read_battery_status() -> int:
 def network_status_entry() -> str:
     ipv4 = ""
     ipv6 = ""
+    route_all = ""
     default_route = get_default_route(get_network_status())
-    if default_route.ipv4 is not None:
+    if default_route.ipv4 is not None and default_route.ipv4 == default_route.ipv6:
         if default_route.ipv4.network_type == "wifi":
-            ipv4 = f"v4[{default_route.ipv4.network_type},{default_route.ipv4.ssid}]"
+            route_all = (
+                f"[v4,v6:{default_route.ipv4.network_type}][{default_route.ipv4.ssid}]"
+            )
         else:
-            ipv4 = f"v4[{default_route.ipv4.network_type}]"
-    if default_route.ipv6 is not None:
-        if default_route.ipv6.network_type == "wifi":
-            ipv6 = f"v6[{default_route.ipv6.network_type},{default_route.ipv6.ssid}]"
-        else:
-            ipv6 = f"v6[{default_route.ipv6.network_type}]"
+            route_all = f"[v4,v6:{default_route.ipv4.network_type}]"
+    else:
+        if default_route.ipv4 is not None:
+            if default_route.ipv4.network_type == "wifi":
+                ipv4 = (
+                    f"[v4:{default_route.ipv4.network_type}][{default_route.ipv4.ssid}]"
+                )
+            else:
+                ipv4 = f"[v4:{default_route.ipv4.network_type}]"
+        if default_route.ipv6 is not None:
+            if default_route.ipv6.network_type == "wifi":
+                ipv6 = (
+                    f"[v6:{default_route.ipv6.network_type}][{default_route.ipv6.ssid}]"
+                )
+            else:
+                ipv6 = f"[v6:{default_route.ipv6.network_type}]"
+    if route_all:
+        return f"{route_all} | "
     if ipv4 and ipv6:
         return f"{ipv4} | {ipv6} | "
     if ipv4:
