@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
 import subprocess
+import functools
+from pick import pick
 import time
 
-HOTSPOT_NAME = "roypur-hotspot"
+
+@functools.cache
+def pick_ssid() -> str:
+    option, _ = pick(["roypur-hotspot", "roypur"], title="Pick a network")
+    return option
 
 
 def scan_wifi() -> None:
@@ -12,7 +18,7 @@ def scan_wifi() -> None:
 def connect_wifi() -> bool:
     try:
         subprocess.run(
-            ["nmcli", "device", "wifi", "connect", HOTSPOT_NAME],
+            ["nmcli", "device", "wifi", "connect", pick_ssid()],
             capture_output=True,
             check=True,
         )
@@ -25,9 +31,9 @@ def connect_loop() -> None:
     while True:
         scan_wifi()
         if connect_wifi():
-            print(f"Successfully connected to {HOTSPOT_NAME}")
+            print(f"Successfully connected to {pick_ssid()}")
             return
-        print(f"Failed to connect to {HOTSPOT_NAME}. Trying again.")
+        print(f"Failed to connect to {pick_ssid()}. Trying again.")
         time.sleep(1)
 
 
