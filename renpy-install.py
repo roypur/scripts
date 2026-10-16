@@ -10,26 +10,38 @@ import sys
 import secrets
 
 
-def install_game(game_name: str, archive_name: str) -> None:
+def install_game(game_name: str, archive_name: str, version: str) -> None:
+    game_path = os.path.join(os.getcwd(), game_name)
     try:
-        os.mkdir(game_name)
+        os.mkdir(game_path)
     except FileExistsError:
         pass
 
-    inner_dir = secrets.token_hex()
-    extract_path = os.path.join(game_name, inner_dir)
-    with zipfile.ZipFile(archive_name, "r") as zip_ref:
-        elements_set = set()
-        for elem in zip_ref.namelist():
-            if len(splitted := elem.strip("/").split("/")) > 0:
-                elements_set.add(splitted[0])
-        elements = list(elements_set)
-        print(elements)
-        if len(elements) == 1:
-            extract_path = game_name
-            inner_dir = elements[0]
-        zip_ref.extractall(extract_path)
-    os.chdir(os.path.join(game_name, inner_dir))
+    output_path = os.path.join(game_path, version)
+    if os.path.exists(output_path):
+        raise UserWarning(f"Directory already exists {output_path}")
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        extract_path = os.path.join(temp_dir, "extract")
+        try:
+            os.mkdir(extract_path)
+        except FileExistsError:
+            pass
+
+        root_dir: str | None = None
+        with zipfile.ZipFile(archive_name, "r") as zip_ref:
+            for elem in zip_ref.namelist():
+                if (cleaned := elem.strip("/")).endswith("/renpy/ast.py"):
+                    root_dir = os.path.join(
+                        extract_path, cleaned.removesuffix("/renpy/ast.py")
+                    )
+                    break
+            if not root_dir:
+                raise UserWarning("This is not a renpy game")
+            zip_ref.extractall(extract_path)
+        print(f"Extracting game to {output_path}")
+        shutil.move(root_dir, output_path)
+    os.chdir(output_path)
 
 
 def install_engine() -> None:
@@ -102,11 +114,11 @@ def remove_hard_pause() -> None:
 
 
 def main() -> None:
-    if len(sys.argv) != 3:
-        print(f"{sys.argv[0]} <game_name> <archive_name>")
+    if len(sys.argv) != 4:
+        print(f"{sys.argv[0]} <game_name> <game_version> <archive_name>")
         return
 
-    install_game(sys.argv[1], sys.argv[2])
+    install_game(game_name=sys.argv[1], version=sys.argv[2], archive_name=sys.argv[3])
     try:
         os.stat("renpy")
         os.stat("lib")
