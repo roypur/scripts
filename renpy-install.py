@@ -11,6 +11,18 @@ import secrets
 from typing import Literal, Final
 import urllib.request
 
+START_WRAPPER: str = "\n".join(
+    [
+        "#!/usr/bin/env bash",
+        "cd $(realpath $(dirname $0))",
+        "systemd-run \\   --user \\",
+        "   --scope \\",
+        "   -p MemoryMax=10G \\",
+        "   -p CPUQuota=70% \\",
+        "   ./renpy.sh",
+    ]
+)
+
 DOWNLOAD_URLS: Final[dict[Literal[7, 8], dict[Literal["name", "url"], str]]] = {
     7: {
         "name": "renpy-7.8.7-sdk",
@@ -95,6 +107,10 @@ def install_engine() -> None:
             shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
             shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
             shutil.copyfile(src=os.path.join(base, "renpy.sh"), dst="renpy.sh")
+
+            with open(os.path.join(base, "run.sh"), encoding="utf-8", mode="w") as f:
+                f.write(START_WRAPPER)
+
             for dirpath, dirnames, filenames in os.walk("."):
                 os.chmod(path=dirpath, mode=0o700)
                 for filename in filenames:
