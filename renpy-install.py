@@ -8,6 +8,7 @@ import tarfile
 import zipfile
 import sys
 import secrets
+import urllib.request
 
 
 def install_game(game_name: str, archive_name: str, version: str) -> None:
@@ -44,32 +45,45 @@ def install_game(game_name: str, archive_name: str, version: str) -> None:
     os.chdir(output_path)
 
 
-def install_engine() -> None:
+def download_engine(archive: str) -> None:
     python_version = 3 if len(glob.glob("lib/*2.7*", recursive=False)) == 0 else 2
+    if python_version == 2:
+        urllib.request.urlretrieve(
+            "https://www.renpy.org/dl/7.8.7/renpy-7.8.7-sdk.tar.bz2", archive
+        )
+        print("Downloaded renpy-7.8.7-sdk")
+        return
+    if python_version == 3:
+        urllib.request.urlretrieve(
+            "https://www.renpy.org/dl/8.5.3/renpy-8.5.3-sdk.tar.bz2", archive
+        )
+        print("Downloaded renpy-8.5.3-sdk")
+        return
+    raise UserWarning("Invalid python version")
 
-    for fname in (
-        glob.glob("*.sh", recursive=False)
-        + glob.glob("*.py", recursive=False)
-        + glob.glob("*.exe", recursive=False)
-    ):
-        os.remove(fname)
 
-    shutil.rmtree(path="renpy")
-    shutil.rmtree(path="lib")
-
-    archive_file = (
-        "/home/roypur/Lataukset/renpy-8.5.2-sdk.tar.bz2"
-        if python_version == 3
-        else "/home/roypur/Lataukset/renpy-7.8.7-sdk.tar.bz2"
-    )
-
-    print(f"Installing {archive_file}")
-
+def install_engine() -> None:
     with tempfile.TemporaryDirectory() as dirname:
+        archive_path = os.path.join(dirname, "archive.tar.bz2")
+        extract_path = os.path.join(dirname, "extract")
+        os.mkdir(extract_path)
+
+        download_engine(archive_path)
+
+        for fname in (
+            glob.glob("*.sh", recursive=False)
+            + glob.glob("*.py", recursive=False)
+            + glob.glob("*.exe", recursive=False)
+        ):
+            os.remove(fname)
+
+        shutil.rmtree(path="renpy")
+        shutil.rmtree(path="lib")
+
         try:
             with tarfile.open(name=archive_file, mode="r:bz2") as archive:
-                archive.extractall(path=dirname, filter="tar")
-            base = glob.glob(os.path.join(dirname, "renpy-*"))[0]
+                archive.extractall(path=extract_path, filter="tar")
+            base = glob.glob(os.path.join(extract_path, "renpy-*"))[0]
             shutil.copytree(src=os.path.join(base, "renpy"), dst="renpy")
             shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
             shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
