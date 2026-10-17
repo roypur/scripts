@@ -108,7 +108,7 @@ def install_engine() -> None:
             shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
             shutil.copyfile(src=os.path.join(base, "renpy.sh"), dst="renpy.sh")
 
-            with open(os.path.join(base, "run.sh"), encoding="utf-8", mode="w") as f:
+            with open("run.sh", encoding="utf-8", mode="w") as f:
                 f.write(START_WRAPPER)
 
             for dirpath, dirnames, filenames in os.walk("."):
