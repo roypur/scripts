@@ -6,6 +6,8 @@ import tempfile
 import shutil
 import tarfile
 import zipfile
+from contextlib import contextmanager
+from collections.abc import Iterator
 import sys
 import secrets
 from typing import Literal, Final
@@ -15,7 +17,8 @@ START_WRAPPER: str = "\n".join(
     [
         "#!/usr/bin/env bash",
         "cd $(realpath $(dirname $0))",
-        "systemd-run \\   --user \\",
+        "systemd-run \\",
+        "   --user \\",
         "   --scope \\",
         "   -p MemoryMax=10G \\",
         "   -p CPUQuota=70% \\",
@@ -33,6 +36,33 @@ DOWNLOAD_URLS: Final[dict[Literal[7, 8], dict[Literal["name", "url"], str]]] = {
         "url": "https://www.renpy.org/dl/8.5.3/renpy-8.5.3-sdk.tar.bz2",
     },
 }
+
+
+class Archive:
+    def __init__(self, archive: zipfile.ZipFile | tarfile.TarFile) -> None:
+        self.archive = archive
+
+    def extractall(self, destination: str) -> None:
+        self.archive.extractall(path=destination)
+
+    def namelist(self) -> list[str]:
+        if isinstance(self.archive, zipfile.ZipFile):
+            return self.archive.namelist()
+        return self.archive.getnames()
+
+
+@contextmanager
+def open_archive(path: str) -> Iterator[Archive]:
+    print(path)
+    if zipfile.is_zipfile(path):
+        with zipfile.ZipFile(path, "r") as zip_archive:
+            yield Archive(archive=zip_archive)
+            return
+    if tarfile.is_tarfile(path):
+        with tarfile.open(path, "r:*") as tar_archive:
+            yield Archive(archive=tar_archive)
+            return
+    raise UserWarning("Unsupported archive type")
 
 
 def install_game(game_name: str, archive_name: str, version: str) -> None:
@@ -54,8 +84,8 @@ def install_game(game_name: str, archive_name: str, version: str) -> None:
             pass
 
         root_dir: str | None = None
-        with zipfile.ZipFile(archive_name, "r") as zip_ref:
-            for elem in zip_ref.namelist():
+        with open_archive(archive_name) as archive:
+            for elem in archive.namelist():
                 if (cleaned := elem.strip("/")).endswith("/renpy/ast.py"):
                     root_dir = os.path.join(
                         extract_path, cleaned.removesuffix("/renpy/ast.py")
@@ -63,7 +93,7 @@ def install_game(game_name: str, archive_name: str, version: str) -> None:
                     break
             if not root_dir:
                 raise UserWarning("This is not a renpy game")
-            zip_ref.extractall(extract_path)
+            archive.extractall(extract_path)
         print(f"Extracting game to {output_path}")
         shutil.move(root_dir, output_path)
     os.chdir(output_path)
@@ -100,13 +130,14 @@ def install_engine() -> None:
         download_engine(engine_version=engine_version, archive=archive_path)
 
         try:
-            with tarfile.open(name=archive_path, mode="r:bz2") as archive:
-                archive.extractall(path=extract_path, filter="tar")
+            with open_archive(archive_path) as archive:
+                archive.extractall(extract_path)
             base = glob.glob(os.path.join(extract_path, "renpy-*"))[0]
             shutil.copytree(src=os.path.join(base, "renpy"), dst="renpy")
             shutil.copytree(src=os.path.join(base, "lib"), dst="lib")
             shutil.copyfile(src=os.path.join(base, "renpy.py"), dst="renpy.py")
             shutil.copyfile(src=os.path.join(base, "renpy.sh"), dst="renpy.sh")
+            shutil.copyfile(src=os.path.join(base, "renpy.exe"), dst="renpy.exe")
 
             with open("run.sh", encoding="utf-8", mode="w") as f:
                 f.write(START_WRAPPER)
