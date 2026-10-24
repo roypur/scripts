@@ -53,7 +53,6 @@ class Archive:
 
 @contextmanager
 def open_archive(path: str) -> Iterator[Archive]:
-    print(path)
     if zipfile.is_zipfile(path):
         with zipfile.ZipFile(path, "r") as zip_archive:
             yield Archive(archive=zip_archive)
