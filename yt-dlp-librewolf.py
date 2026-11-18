@@ -47,7 +47,7 @@ def main() -> None:
         extra = copy.deepcopy(sys.argv)
         extra.pop(0)
         extra.pop(0)
-        os.execv("yt-dlp", base_command + extra)
+        os.execvp("yt-dlp", base_command + extra)
     print(f"{sys.argv[0]} <profile> <yt_dlp_commands>")
 
 
